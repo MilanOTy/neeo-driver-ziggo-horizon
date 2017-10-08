@@ -1,0 +1,26 @@
+{
+  "name": "ziggo-horizon",
+  "version": "0.0.1",
+  "description": "Custom driver for the SMT-C7400 and SMT-C7401 for the Neeo remote.",
+  "main": "index.js",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "neeo-sdk": "^0.45.7",
+    "net": "^1.0.2",
+    "node-ssdp-lite": "^0.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Webunity/ziggo-horizon.git"
+  },
+  "author": "Gilles van den Hoven <gilles@webunity.nl>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Webunity/ziggo-horizon/issues"
+  },
+  "homepage": "https://github.com/Webunity/ziggo-horizon#readme"
+}

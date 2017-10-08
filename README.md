@@ -4,8 +4,8 @@ The Dutch television provider Ziggo issues a so called 'Mediabox XL'. At the tim
 By writing a custom driver for the SMT-C7400 and SMT-C7401 based on work done by other developers, the SMT-C7400 and SMT-C7401 can be made 'smart'.
 
 **Reading material found/used:**
- - [Horizon Control](https://github.com/kuijp/horizoncontrol) (Python API wrapper)
- - [Einder](https://github.com/OrangeTux/einder) (Java API wrapper)
+ - [Horizon Control](https://github.com/kuijp/horizoncontrol) (Java API wrapper)
+ - [Einder](https://github.com/OrangeTux/einder) (Python API wrapper)
  - [tv.horizon.ziggo](https://github.com/jordenc/tv.horizon.ziggo) (Homey API wrapper)
  - [HorizonRemote](https://github.com/rogro82/HorizonRemote) (Android API wrapper)
  - [horizon](https://github.com/openhab/openhab1-addons/tree/master/bundles/binding/org.openhab.binding.horizon) (OpenHAB binding)
