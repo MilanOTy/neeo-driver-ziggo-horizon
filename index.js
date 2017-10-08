@@ -57,8 +57,10 @@ SsdpClient.on('response', function(headers, rinfo) {
 				.addButtonGroup('Transport')
 				.addButtonGroup('Transport Search')
 				.addButtonGroup('Record')
+				.addButton({ name: 'GUIDE', label: 'TV Gids' })
 				.addButton({ name: 'ONDEMAND', label: 'On Demand' })
 				.addButton({ name: 'HELP', label: 'Help' })
+				.addButton({ name: 'INFO', label: 'Informatie' })
 				.addButton({ name: 'TEXT', label: 'Teletekst' })
 				.addButtonHander((btn) => { mediabox.onButtonPressed(btn); });
 
