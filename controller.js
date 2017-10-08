@@ -2,6 +2,7 @@
 
 const Net = require('net');
 const Promise = require('bluebird');
+const http = require('http');
 
 /**
  * Convert a hexadecimal string into its binary representation.
@@ -142,6 +143,10 @@ module.exports = class MediaboxXl {
 	}
 
 	debug(msg) {
+		//console.log(msg);
+	}
+
+	info(msg) {
 		console.log(msg);
 	}
 
@@ -172,19 +177,27 @@ module.exports = class MediaboxXl {
 	}
 
 	isPoweredOn() {
-		return false;
+		var _this = this;
+		return new Promise(function(resolve, reject) {
+			var request = http.get('http://' + _this.mediaboxIp + ':62137/DeviceDescription.xml', function (res) {
+				resolve();
+			}).on('error', function(e) {
+				reject();
+			});
+			request.setTimeout(2000, function() {
+				reject();
+			});
+		})
 	}
 
 	powerOn() {
-		if (!this.isPoweredOn()) {
-			this.powerToggle();
-		}
+		var _this = this;
+		this.isPoweredOn().then(() => { }, () => { _this.powerToggle(); });
 	}
 
 	powerOff() {
-		if (this.isPoweredOn()) {
-			this.powerToggle();
-		}
+		var _this = this;
+		this.isPoweredOn().then(() => { _this.powerToggle(); }, () => { });
 	}
 
 	powerToggle() {
@@ -226,7 +239,7 @@ module.exports = class MediaboxXl {
 					this.powerOff();
 					break;
 				default:
-					this.debug(`[CONTROLLER] ${btn} button pressed`);
+					this.info(`[CONTROLLER] ${btn} button pressed which is not mapped!`);
 					break;
 			}
 			return;
