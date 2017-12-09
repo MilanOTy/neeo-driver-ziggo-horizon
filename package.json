@@ -5,6 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "bluebird": "^3.5.1",
+    "config": "^1.28.1",
+    "debug": "^3.1.0",
     "neeo-sdk": "^0.47.8",
     "net": "^1.0.2",
     "node-ssdp-lite": "^0.2.0"
@@ -21,6 +23,9 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Webunity/ziggo-horizon/issues"
+  },
+  "engines": {
+    "node": ">=6.0.0"
   },
   "homepage": "https://github.com/Webunity/ziggo-horizon#readme"
 }

@@ -1,0 +1,6 @@
+{
+	"mediabox" {
+		"ip": "",
+		"ssdp-timeout": 15000
+	}
+}

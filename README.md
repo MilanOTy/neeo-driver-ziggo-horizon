@@ -59,3 +59,11 @@ Then follow the same steps for the 2.4 GHz network, like shown below.
 ![WiFi2](https://github.com/Webunity/ziggo-horizon/raw/master/Assets/wifi2.png)
 
 That should be it!
+
+### Step 3. Using this driver
+In order to use this driver you need an 'always-on' device capable of running NodeJS >= v6. I recommend a Raspberry Pi which is connected via LAN and connected to thesame network as your Horizon Mediabox.
+
+More instructions will be added later.
+
+### Open points
+- Make brain IP configurable
