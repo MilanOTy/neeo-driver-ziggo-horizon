@@ -9,15 +9,15 @@
 # built-in service functions are used. So information is provided for both.
 #
 ### BEGIN INIT INFO
-# Provides:			 ziggo-horizon
-# Required-Start:	   $syslog $remote_fs
-# Required-Stop:		$syslog $remote_fs
-# Should-Start:		 $local_fs
-# Should-Stop:		  $local_fs
-# Default-Start:		2 3 4 5
-# Default-Stop:		 0 1 6
+# Provides:		ziggo-horizon
+# Required-Start:	$syslog $remote_fs
+# Required-Stop:	$syslog $remote_fs
+# Should-Start:		$local_fs
+# Should-Stop:		$local_fs
+# Default-Start:	2 3 4 5
+# Default-Stop:		0 1 6
 # Short-Description:	Ziggo Horizon Mediabox XL driver
-# Description:		  Ziggo Horizon Mediabox XL driver
+# Description:		Ziggo Horizon Mediabox XL driver
 ### END INIT INFO
 #
 ### BEGIN CHKCONFIG INFO
@@ -41,12 +41,12 @@
 #
 
 NAME="Ziggo Horizon Mediabox XL driver"	# An application name to display in echo text.
-NODE_BIN_DIR="/usr/local/bin/node"			# The full path to the directory containing the node and forever binaries.
+NODE_BIN_DIR="/usr/local/bin/node"	# The full path to the directory containing the node and forever binaries.
 NODE_PATH="/usr/local/lib/node_modules"	# Set the NODE_PATH to the Node.js main node_modules directory.
-APPLICATION_PATH=""								# The path where you have the JS files running
-PIDFILE="/var/run/ziggo-horizon.pid"		# Process ID file path.
-LOGFILE="/var/log/ziggo-horizon.log"		# Log file path.
-MIN_UPTIME="5000"									# Forever settings to prevent the application spinning if it fails on launch.
+APPLICATION_PATH=""			# The path where you have the JS files running
+PIDFILE="/var/run/ziggo-horizon.pid"	# Process ID file path.
+LOGFILE="/var/log/ziggo-horizon.log"	# Log file path.
+MIN_UPTIME="5000"			# Forever settings to prevent the application spinning if it fails on launch.
 SPIN_SLEEP_TIME="2000"
  
 # Add node to the path for situations in which the environment is passed.
