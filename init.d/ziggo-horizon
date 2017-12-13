@@ -43,7 +43,7 @@
 NAME="Ziggo Horizon Mediabox XL driver"	# An application name to display in echo text.
 NODE_BIN_DIR="/usr/local/bin/node"	# The full path to the directory containing the node and forever binaries.
 NODE_PATH="/usr/local/lib/node_modules"	# Set the NODE_PATH to the Node.js main node_modules directory.
-APPLICATION_PATH=""			# The path where you have the JS files running
+APPLICATION_PATH="/<path>/ziggo-horizon/index.js"			# The path where you have the JS files running
 PIDFILE="/var/run/ziggo-horizon.pid"	# Process ID file path.
 LOGFILE="/var/log/ziggo-horizon.log"	# Log file path.
 MIN_UPTIME="5000"			# Forever settings to prevent the application spinning if it fails on launch.
