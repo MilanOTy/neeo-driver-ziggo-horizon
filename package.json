@@ -1,6 +1,6 @@
 {
   "name": "ziggo-horizon",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Custom driver for the SMT-C7400 and SMT-C7401 for the Neeo remote.",
   "main": "index.js",
   "dependencies": {

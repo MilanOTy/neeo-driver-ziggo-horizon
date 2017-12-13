@@ -35,7 +35,7 @@ process.on('uncaughtException', exitHandler.bind(null, { exit: true }));
 
 // Start script
 Debug('---------------------------------------------');
-Debug(' Ziggo Horizon Mediabox adapter');
+Debug(' Ziggo Horizon Mediabox XL driver');
 Debug('---------------------------------------------');
 
 // Check Node version
@@ -53,10 +53,6 @@ const HorizonController = require('./horizon-controller');
 Debug('  - OK');
 
 // Start script
-// - Find Mediabox
-// - onFound - register brain
-// - onConnect
-// - onDisconnect
 horizonController = new HorizonController();
 horizonController.on('found', function(ip) {
 	Debug('* Searching for NEEO Brain (max 10 sec.)');
