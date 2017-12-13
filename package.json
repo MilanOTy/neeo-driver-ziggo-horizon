@@ -9,7 +9,8 @@
     "debug": "^3.1.0",
     "neeo-sdk": "^0.47.8",
     "net": "^1.0.2",
-    "node-ssdp-lite": "^0.2.0"
+    "node-ssdp": "^3.2.5",
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {},
   "scripts": {

@@ -1,6 +1,14 @@
 {
-	"mediabox" {
-		"ip": "",
-		"ssdp-timeout": 15000
+	"Mediabox": {
+		"IP": "",
+		"DiscoveryTimeout": 15000
+	},
+	"NeeoUI": {
+		"GuideLabel": "TV Gids",
+		"OnDemandLabel": "On Demand",
+		"HelpLabel": "Help",
+		"InfoLabel": "Informatie",
+		"TextLabel": "Teletekst"
 	}
+
 }

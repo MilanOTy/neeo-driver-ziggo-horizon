@@ -1,52 +1,79 @@
 'use strict';
 
-const Promise = require("bluebird");
-const Ssdp = require('node-ssdp-lite');
-const neeoapi = require('neeo-sdk');
-const controller = require('./controller');
+// Constants
+const Debug = require('debug')('ziggo-horizon:main');
+const Util = require('util');
+Debug.log = function() {
+	process.stderr.write('[' + new Date().toISOString() + '] ' + Util.format.apply(Util, arguments) + '\n');
+}
+const Config = require('config');
 
+// Variables
+var horizonController;
 
+// Methods
+function exitHandler(options, err) {
+        if (options.cleanup) {
+                // Perform cleanup tasks
+        }
 
-//----------------------------------------------------------------------------------------------------
+        if (err) {
+                Debug(err.stack);
+        }
+
+        if (options.exit) {
+                process.exit();
+        }
+}
+
+// process handlers
+process.on('exit', exitHandler.bind(null, { cleanup: true }));
+process.on('SIGINT', exitHandler.bind(null, { exit: true }));
+process.on('SIGUSR1', exitHandler.bind(null, { exit: true })); // catches "kill pid" (for example: nodemon restart)
+process.on('SIGUSR2', exitHandler.bind(null, { exit: true })); // catches "kill pid" (for example: nodemon restart)
+process.on('uncaughtException', exitHandler.bind(null, { exit: true }));
+
 // Start script
-//----------------------------------------------------------------------------------------------------
+Debug('---------------------------------------------');
+Debug(' Ziggo Horizon Mediabox adapter');
+Debug('---------------------------------------------');
 
-console.log('---------------------------------------------');
-console.log(' Ziggo Horizon Mediabox adapter');
-console.log('---------------------------------------------');
-console.log(' - Searching for Horizon Mediabox XL (max 15 sec.)');
+// Check Node version
+Debug('* verifying installed Node runtime ...');
+if (process.versions.node < '6.0') {
+        throw new Error('This driver only runs on node >= 6.0. Your current node version is ' + process.versions.node + '.');
+} else {
+	Debug('  - OK: ', process.versions.node);
+}
 
-// Search for mediabox on local network
-var mediabox;
+// Load modules
+Debug('* loading modules ...');
+const NeeoSdk = require('neeo-sdk');
+const HorizonController = require('./horizon-controller');
+Debug('  - OK');
 
-const SsdpClient = new Ssdp({ logLevel: 'TRACE', log: false });
-const ssdpTimeout = setTimeout(() => {
-			console.log('   - FAILED!');
-			process.exit(1);
-		}, 15000);
-
-SsdpClient.on('response', function(headers, rinfo) {
-	if (headers.indexOf('X-User-Agent: redsonic') > -1) {
-		console.log('   - FOUND! -> ', rinfo.address);
-		clearTimeout(ssdpTimeout);
-		this.stop();
-
-		const neeoTimeout = setTimeout(() => {
-			console.log('   - FAILED!');
-			process.exit(1);
-		}, 15000);
-
-		console.log(' - Searching for NEEO Brain (max 15 sec.)');
-		neeoapi.discoverOneBrain().then((brain) => {
-			console.log('   - FOUND! -> ', brain.name);
+// Start script
+// - Find Mediabox
+// - onFound - register brain
+// - onConnect
+// - onDisconnect
+horizonController = new HorizonController();
+horizonController.on('found', function(ip) {
+	Debug('* Searching for NEEO Brain (max 10 sec.)');
+	const neeoTimeout = setTimeout(() => {
+		Debug('  - Failed');
+		process.exit(1);
+	}, 10000);
+	
+	NeeoSdk
+		.discoverOneBrain()
+		.then((brain) => {
 			clearTimeout(neeoTimeout);
-
-			// initiate Mediabox object
-			mediabox = new controller(rinfo.address);
+			Debug('  - OK, found a Neeo brain with name: ' + brain.name);
 
 			// Set the device info, used to identify it on the Brain
-			const neeoDevice = neeoapi.buildDevice('Mediabox XL')
-				.setManufacturer('Ziggo')
+			const neeoDevice = NeeoSdk.buildDevice('Horizon Mediabox XL')
+				.setManufacturer('Ziggo/UPC')
 				.addAdditionalSearchToken('horizon')
 				.setType('DVB')
 				.addButtonGroup('POWER')
@@ -57,71 +84,37 @@ SsdpClient.on('response', function(headers, rinfo) {
 				.addButtonGroup('Transport')
 				.addButtonGroup('Transport Search')
 				.addButtonGroup('Record')
-				.addButton({ name: 'GUIDE', label: 'TV Gids' })
-				.addButton({ name: 'ONDEMAND', label: 'On Demand' })
-				.addButton({ name: 'HELP', label: 'Help' })
-				.addButton({ name: 'INFO', label: 'Informatie' })
-				.addButton({ name: 'TEXT', label: 'Teletekst' })
-				.addButtonHander((btn) => { mediabox.onButtonPressed(btn); });
+				.addButton({ name: 'GUIDE', label: (Config.has('NeeoUI.GuideLabel') ? Config.get('NeeoUI.GuideLabel') : 'TV Guide') })
+				.addButton({ name: 'ONDEMAND', label: (Config.has('NeeoUI.OnDemandLabel') ? Config.get('NeeoUI.OnDemandLabel') : 'On Demand') })
+				.addButton({ name: 'HELP', label: (Config.has('NeeoUI.HelpLabel') ? Config.get('NeeoUI.HelpLabel') : 'Help') })
+				.addButton({ name: 'INFO', label: (Config.has('NeeoUI.InfoLabel') ? Config.get('NeeoUI.InfoLabel') : 'Info') })
+				.addButton({ name: 'TEXT', label: (Config.has('NeeoUI.TextLabel') ? Config.get('NeeoUI.TextLabel') : 'Text') })
+				.addButtonHander((btn) => { horizonController.onButtonPressed(btn); });
 
-			console.log(' - Starting "Ziggo Mediabox XL" driver ...');
-			return neeoapi.startServer({
+			Debug('* Announcing "Horizon Mediabox XL" driver to the Neeo brain ...');
+			return NeeoSdk.startServer({
 				brain,
 				port: 6336,
-				name: 'mediaboxXl',
+				name: 'ziggo-horizon',
 				devices: [neeoDevice]
 			});
 		})
 		.then(() => {
-			console.log('   - READY! use the NEEO app to search for "Ziggo Mediabox XL".');
-		})
-		.catch((err) => {
-			console.error('ERROR!', err);
-			process.exit(1);
+			Debug('  - OK');
+			horizonController.connectBox();
 		});
-	}
 });
 
-SsdpClient.search('urn:schemas-upnp-org:service:ContentDirectory:1');
-
-/*
-
-function exitHandler(options, err) {
-	if (options.cleanup) {
-		console.log('clean');
-	}
-
-	if (err) {
-		console.log(err.stack);
-	}
-
-	if (options.exit) {
-		process.exit();
-	}
-}
-
-//do something when app is closing
-process.on('exit', exitHandler.bind(null,{cleanup:true}));
-
-//catches ctrl+c event
-process.on('SIGINT', exitHandler.bind(null, {exit:true}));
-
-// catches "kill pid" (for example: nodemon restart)
-process.on('SIGUSR1', exitHandler.bind(null, {exit:true}));
-process.on('SIGUSR2', exitHandler.bind(null, {exit:true}));
-
-//catches uncaught exceptions
-process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
-
-var Mediabox = require('./mediabox/mediabox.js');
-var Ssdp = require('node-ssdp-lite'), SsdpClient = new Ssdp({logLevel: 'TRACE', log: false});
-SsdpClient.on('response', function(headers, rinfo) {
-	if (headers.indexOf('X-User-Agent: redsonic') > -1) {
-		var mediaBox = new Mediabox(rinfo.address);
-		mediaBox.display();
-		mediaBox.powerOn();
-	}
+horizonController.on('connected', function() {
+	Debug('* We are ready to control your Horizon Mediabox XL!');
+	Debug('* If this is the first time you start this driver, you can use the');
+	Debug('* Neeo app to search for a new device called "Horizon Mediabox XL".');
 });
-SsdpClient.search('urn:schemas-upnp-org:service:ContentDirectory:1');
 
-*/
+horizonController.on('disconnected', function() {
+	var reconnectTimer = setTimeout(() => {
+					clearTimeout(reconnectTimer);
+					horizonController.findBox();
+				}, horizonController.reconnectDelay);
+});
+horizonController.findBox();
