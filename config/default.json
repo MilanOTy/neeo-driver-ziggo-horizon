@@ -1,14 +1,21 @@
 {
-	"Mediabox": {
-		"IP": "",
-		"DiscoveryTimeout": 15000
+	"Driver": {
+		"ServerPort": 6336,
+		"SsdpTimeout": 15000
 	},
-	"NeeoUI": {
-		"GuideLabel": "TV Gids",
-		"OnDemandLabel": "On Demand",
-		"HelpLabel": "Help",
-		"InfoLabel": "Informatie",
-		"TextLabel": "Teletekst"
+	"Mediabox": {
+		"IP": ""
+	},
+	"Neeo": {
+		"UI": {
+			"Label": {
+				"Guide": "TV Gids",
+				"OnDemand": "On Demand",
+				"Help": "Help",
+				"Info": "Informatie",
+				"Text": "Teletekst"
+			}
+		}
 	}
 
 }

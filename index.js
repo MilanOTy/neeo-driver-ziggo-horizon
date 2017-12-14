@@ -6,7 +6,7 @@ const Util = require('util');
 Debug.log = function() {
 	process.stderr.write('[' + new Date().toISOString() + '] ' + Util.format.apply(Util, arguments) + '\n');
 }
-const Config = require('config');
+const Config = require('./config-has');
 
 // Variables
 var horizonController;
@@ -60,7 +60,7 @@ horizonController.on('found', function(ip) {
 		Debug('  - Failed');
 		process.exit(1);
 	}, 10000);
-	
+
 	NeeoSdk
 		.discoverOneBrain()
 		.then((brain) => {
@@ -80,19 +80,19 @@ horizonController.on('found', function(ip) {
 				.addButtonGroup('Transport')
 				.addButtonGroup('Transport Search')
 				.addButtonGroup('Record')
-				.addButton({ name: 'GUIDE', label: (Config.has('NeeoUI.GuideLabel') ? Config.get('NeeoUI.GuideLabel') : 'TV Guide') })
-				.addButton({ name: 'ONDEMAND', label: (Config.has('NeeoUI.OnDemandLabel') ? Config.get('NeeoUI.OnDemandLabel') : 'On Demand') })
-				.addButton({ name: 'HELP', label: (Config.has('NeeoUI.HelpLabel') ? Config.get('NeeoUI.HelpLabel') : 'Help') })
-				.addButton({ name: 'INFO', label: (Config.has('NeeoUI.InfoLabel') ? Config.get('NeeoUI.InfoLabel') : 'Info') })
-				.addButton({ name: 'TEXT', label: (Config.has('NeeoUI.TextLabel') ? Config.get('NeeoUI.TextLabel') : 'Text') })
+				.addButton({ name: 'GUIDE', label: Config.hasOr('Neeo.UI.Label.Guide', 'TV Guide') })
+				.addButton({ name: 'ONDEMAND', label: Config.hasOr('Neeo.UI.Label.OnDemand', 'On Demand') })
+				.addButton({ name: 'HELP', label: Config.hasOr('Neeo.UI.Label.Help', 'Help') })
+				.addButton({ name: 'INFO', label: Config.hasOr('Neeo.UI.Label.Info', 'Info') })
+				.addButton({ name: 'TEXT', label: Config.hasOr('Neeo.UI.Label.Text', 'Text') })
 				.addButtonHander((btn) => { horizonController.onButtonPressed(btn); });
 
 			Debug('* Announcing "Horizon Mediabox XL" driver to the Neeo brain ...');
 			return NeeoSdk.startServer({
 				brain,
-				port: 6336,
+				port: Config.hasOr('Driver.ServerPort', 6336),
 				name: 'ziggo-horizon',
-				devices: [neeoDevice]
+				devices: [ neeoDevice ]
 			});
 		})
 		.then(() => {
@@ -113,4 +113,5 @@ horizonController.on('disconnected', function() {
 					horizonController.findBox();
 				}, horizonController.reconnectDelay);
 });
+
 horizonController.findBox();

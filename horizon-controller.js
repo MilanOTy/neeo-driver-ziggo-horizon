@@ -5,7 +5,7 @@ const Util = require('util');
 Debug.log = function() {
         process.stderr.write('[' + new Date().toISOString() + '] ' + Util.format.apply(Util, arguments) + '\n');
 }
-const Config = require('config');
+const Config = require('./config-has');
 const EventEmitter = require('events');
 const Ssdp = require('node-ssdp').Client;
 const Net = require('net');
@@ -92,7 +92,7 @@ class HorizonController extends EventEmitter {
 		super();
 
 		// If we have a hardcoded IP, connect to it
-		this.mediaboxIp = Config.has('Mediabox.IP') ? Config.get('Mediabox.IP') : '';
+		this.mediaboxIp = Config.hasOr('Mediabox.IP', '');
 
 		// This keeps an array of digits, to make it possible to send just one 'command' for changing to channel e.g. "311" instead of 3 seperate connections.
 		this.digitTimer = null;
@@ -111,7 +111,7 @@ class HorizonController extends EventEmitter {
 		}
 
 		// Initiate SSDP search
-	        var millis = Config.has('Mediabox.DiscoveryTimeout') ? Config.get('Mediabox.DiscoveryTimeout') : 30000;
+	        var millis = Config.hasOr('Driver.SsdpTimeout', 15000);
 	        var minutes = Math.floor(millis / 60000);
 	        minutes = (minutes == 0) ? '' : (minutes + ' minute' + ((minutes > 1) ? 's' : ''));
 
