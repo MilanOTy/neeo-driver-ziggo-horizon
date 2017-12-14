@@ -122,7 +122,7 @@ class HorizonController extends EventEmitter {
 	        }
 
 		// Set timeout
-		const ssdpClient = new Ssdp({ logLevel: 'TRACE', log: true });
+		const ssdpClient = new Ssdp({ 'explicitSocketBind': true });
 		const ssdpTimeout = setTimeout(() => {
 	        	Debug('  - Timeout occured after ' + minutes + seconds + '!');
 			clearTimeout(ssdpTimeout);
