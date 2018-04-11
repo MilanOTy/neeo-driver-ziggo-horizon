@@ -3,7 +3,7 @@
 // Constants
 const Debug = require('debug')('ziggo-horizon:main');
 const Util = require('util');
-Debug.log = function() {
+Debug.log = function () {
 	process.stderr.write('[' + new Date().toISOString() + '] ' + Util.format.apply(Util, arguments) + '\n');
 }
 const Config = require('./config-has');
@@ -13,17 +13,17 @@ var horizonController;
 
 // Methods
 function exitHandler(options, err) {
-        if (options.cleanup) {
-                // Perform cleanup tasks
-        }
+	if (options.cleanup) {
+		// Perform cleanup tasks
+	}
 
-        if (err) {
-                Debug(err.stack);
-        }
+	if (err) {
+		Debug(err.stack);
+	}
 
-        if (options.exit) {
-                process.exit();
-        }
+	if (options.exit) {
+		process.exit();
+	}
 }
 
 // process handlers
@@ -41,7 +41,7 @@ Debug('---------------------------------------------');
 // Check Node version
 Debug('* verifying installed Node runtime ...');
 if (process.versions.node < '6.0') {
-        throw new Error('This driver only runs on node >= 6.0. Your current node version is ' + process.versions.node + '.');
+	throw new Error('This driver only runs on node >= 6.0. Your current node version is ' + process.versions.node + '.');
 } else {
 	Debug('  - OK: ', process.versions.node);
 }
@@ -54,7 +54,7 @@ Debug('  - OK');
 
 // Start script
 horizonController = new HorizonController();
-horizonController.on('found', function(ip) {
+horizonController.on('found', function (ip) {
 	Debug('* Searching for NEEO Brain (max 10 sec.)');
 	const neeoTimeout = setTimeout(() => {
 		Debug('  - Failed');
@@ -92,7 +92,7 @@ horizonController.on('found', function(ip) {
 				brain,
 				port: Config.hasOr('Driver.ServerPort', 6336),
 				name: 'ziggo-horizon',
-				devices: [ neeoDevice ]
+				devices: [neeoDevice]
 			});
 		})
 		.then(() => {
@@ -101,17 +101,17 @@ horizonController.on('found', function(ip) {
 		});
 });
 
-horizonController.on('connected', function() {
+horizonController.on('connected', function () {
 	Debug('* We are ready to control your Horizon Mediabox XL!');
 	Debug('* If this is the first time you start this driver, you can use the');
 	Debug('* Neeo app to search for a new device called "Horizon Mediabox XL".');
 });
 
-horizonController.on('disconnected', function() {
+horizonController.on('disconnected', function () {
 	var reconnectTimer = setTimeout(() => {
-					clearTimeout(reconnectTimer);
-					horizonController.findBox();
-				}, horizonController.reconnectDelay);
+		clearTimeout(reconnectTimer);
+		horizonController.findBox();
+	}, horizonController.reconnectDelay);
 });
 
 horizonController.findBox();

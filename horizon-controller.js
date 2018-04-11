@@ -2,8 +2,8 @@
 
 const Debug = require('debug')('ziggo-horizon:controller');
 const Util = require('util');
-Debug.log = function() {
-        process.stderr.write('[' + new Date().toISOString() + '] ' + Util.format.apply(Util, arguments) + '\n');
+Debug.log = function () {
+	process.stderr.write('[' + new Date().toISOString() + '] ' + Util.format.apply(Util, arguments) + '\n');
 }
 const Config = require('./config-has');
 const EventEmitter = require('events');
@@ -103,35 +103,35 @@ class HorizonController extends EventEmitter {
 		// Initialize random reconnect delay
 		this.reconnectDelay = Math.floor(Math.random() * 17) + 3;
 
-        	Debug('* Searching for Horizon Mediabox XL ...');
+		Debug('* Searching for Horizon Mediabox XL ...');
 		if (this.mediaboxIp != '') {
-	        	Debug(' - Found a box with IP: ' + this.mediaboxIp);
+			Debug(' - Found a box with IP: ' + this.mediaboxIp);
 			this.emit('found', this.mediaboxIp);
 			return;
 		}
 
 		// Initiate SSDP search
-	        var millis = Config.hasOr('Driver.SsdpTimeout', 15000);
-	        var minutes = Math.floor(millis / 60000);
-	        minutes = (minutes == 0) ? '' : (minutes + ' minute' + ((minutes > 1) ? 's' : ''));
+		var millis = Config.hasOr('Driver.SsdpTimeout', 15000);
+		var minutes = Math.floor(millis / 60000);
+		minutes = (minutes == 0) ? '' : (minutes + ' minute' + ((minutes > 1) ? 's' : ''));
 
-	        var seconds = ((millis % 60000) / 1000).toFixed(0);
-	        seconds = (seconds == 0) ? '' : (seconds + ' second' + ((seconds > 1) ? 's' : ''));
-	        if ((minutes != '') && (seconds != '')) {
-	                minutes = minutes + ' and ';
-	        }
+		var seconds = ((millis % 60000) / 1000).toFixed(0);
+		seconds = (seconds == 0) ? '' : (seconds + ' second' + ((seconds > 1) ? 's' : ''));
+		if ((minutes != '') && (seconds != '')) {
+			minutes = minutes + ' and ';
+		}
 
 		// Set timeout
 		const ssdpClient = new Ssdp({ 'explicitSocketBind': true });
 		const ssdpTimeout = setTimeout(() => {
-	        	Debug('  - Timeout occured after ' + minutes + seconds + '!');
+			Debug('  - Timeout occured after ' + minutes + seconds + '!');
 			clearTimeout(ssdpTimeout);
 			this.emit('disconnected');
 		}, millis);
 
 		// Start search
 		var _this = this;
-		ssdpClient.on('response', function(headers, statusCode, rinfo) {
+		ssdpClient.on('response', function (headers, statusCode, rinfo) {
 			// If we get a redsonic user agent ...
 			if (headers['X-USER-AGENT'] == 'redsonic') {
 				// We download the description XML ...
@@ -193,7 +193,7 @@ class HorizonController extends EventEmitter {
 		this.connectionState = ConnectionState.DISCONNECTED;
 		this.socket = new Net.Socket();
 		this.socket.setKeepAlive(true, 5000);
-		this.socket.on('data', function(data) {
+		this.socket.on('data', function (data) {
 			var datastring = data.toString();
 			var buffer = data.toJSON(data);
 
@@ -222,17 +222,26 @@ class HorizonController extends EventEmitter {
 					if (datastring == "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000") {
 						Debug('  - Connected and ready to send commands.');
 						_this.connectionState = ConnectionState.CONNECTED;
-
 						_this.emit('connected');
 					}
 					break;
 			}
 		});
 
-		this.socket.on('close', function() {
+		this.socket.on('close', function () {
 			_this.connectionState = ConnectionState.DISCONNECTED;
 			Debug('* Disconnected ... reconnecting after ' + _this.reconnectDelay + ' seconds.');
 			_this.emit('disconnected');
+		});
+
+		this.socket.on('error', function (ex) {
+			_this.emit('error', ex);
+
+			if (ex.code === 'ECONNREFUSED') {
+				_this.connectionState = ConnectionState.DISCONNECTED;
+				Debug('* Error connecting ... reconnecting after ' + _this.reconnectDelay + ' seconds.');
+				_this.emit('disconnected');
+			}
 		});
 
 		// Make the actual connection
@@ -255,27 +264,23 @@ class HorizonController extends EventEmitter {
 		var _this = this;
 		var cmds = this.socketCmds;
 		this.socketCmds = [];
-		Promise.mapSeries(cmds, function(cmd) {
-				_this.socket.write(Hex2Bin("040100000000" + cmd));
-				return Promise.delay(keyDelay).then(function() {
-					_this.socket.write(Hex2Bin("040000000000" + cmd));
-				}).delay(keyDelay);
-			});
-			// Keep connection alive if possible...
-			/*.then(function() {
-				socket.destroy();
-			});*/
+		Promise.mapSeries(cmds, function (cmd) {
+			_this.socket.write(Hex2Bin("040100000000" + cmd));
+			return Promise.delay(keyDelay).then(function () {
+				_this.socket.write(Hex2Bin("040000000000" + cmd));
+			}).delay(keyDelay);
+		});
 	}
 
 	isPoweredOn() {
 		var _this = this;
-		return new Promise(function(resolve, reject) {
+		return new Promise(function (resolve, reject) {
 			var request = http.get('http://' + _this.mediaboxIp + ':62137/DeviceDescription.xml', function (res) {
 				resolve();
-			}).on('error', function(e) {
+			}).on('error', function (e) {
 				reject();
 			});
-			request.setTimeout(2000, function() {
+			request.setTimeout(2000, function () {
 				reject();
 			});
 		})
@@ -292,7 +297,7 @@ class HorizonController extends EventEmitter {
 	}
 
 	powerToggle() {
-		this.addCommands([ buttonMapping['POWER'] ]);
+		this.addCommands([buttonMapping['POWER']]);
 	}
 
 	selectChannel() {
@@ -303,7 +308,7 @@ class HorizonController extends EventEmitter {
 		// For debugging
 		var channel = '';
 		for (var i = 0; i < cmds.length; i++) {
-			channel+= cmds[i].substr(3, 1);
+			channel += cmds[i].substr(3, 1);
 		}
 		Debug('* Switch to channel: ' + channel);
 
@@ -344,8 +349,8 @@ class HorizonController extends EventEmitter {
 			// Reset timer
 			clearTimeout(this.digitTimer);
 			this.digitTimer = setTimeout(() => {
-					this.selectChannel();
-				}, 1000);
+				this.selectChannel();
+			}, 1000);
 
 			// Add this digit to the stack
 			this.digits.push(cmd);
@@ -364,7 +369,7 @@ class HorizonController extends EventEmitter {
 		}
 
 		Debug(`* ${btn} button pressed, resulting in ${cmd}`);
-		this.addCommands([ cmd ]);
+		this.addCommands([cmd]);
 	}
 }
 
