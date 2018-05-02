@@ -46,9 +46,9 @@ NODE_PATH="/usr/local/lib/node_modules"	# Set the NODE_PATH to the Node.js main 
 APPLICATION_PATH="/opt/frankendaal43/ziggo-horizon/index.js"			# The path where you have the JS files running
 PIDFILE="/var/run/ziggo-horizon.pid"	# Process ID file path.
 LOGFILE="/var/log/ziggo-horizon.log"	# Log file path.
-MIN_UPTIME="5000"			# Forever settings to prevent the application spinning if it fails on launch.
-SPIN_SLEEP_TIME="2000"
- 
+MIN_UPTIME="10000"			# Forever settings to prevent the application spinning if it fails on launch.
+SPIN_SLEEP_TIME="100"
+
 # Add node to the path for situations in which the environment is passed.
 PATH=$NODE_BIN_DIR:$PATH
 
@@ -56,7 +56,7 @@ PATH=$NODE_BIN_DIR:$PATH
 # application process forked by Forever. It will not see any of the other
 # variables defined in this script.
 export NODE_PATH=$NODE_PATH
- 
+
 start() {
 	echo "Starting $NAME"
 	# We're calling forever directly without using start-stop-daemon for the
@@ -86,7 +86,7 @@ start() {
 	  start $APPLICATION_PATH 2>&1 > /dev/null &
 	RETVAL=$?
 }
- 
+
 stop() {
 	if [ -f $PIDFILE ]; then
 		echo "Shutting down $NAME"
@@ -100,12 +100,12 @@ stop() {
 		RETVAL=0
 	fi
 }
- 
+
 restart() {
 	stop
 	start
 }
- 
+
 status() {
 	# On Ubuntu this isn't even necessary. To find out whether the service is
 	# running, use "service my-application status" which bypasses this script
@@ -128,7 +128,7 @@ status() {
 		RETVAL=3
 	fi
 }
- 
+
 case "$1" in
 	start)
 		start
