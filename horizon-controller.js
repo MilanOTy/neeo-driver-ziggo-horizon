@@ -100,6 +100,8 @@ class HorizonController extends EventEmitter {
 	}
 
 	findBox() {
+		var _this = this;
+
 		// Initialize random reconnect delay
 		this.reconnectDelay = Math.floor(Math.random() * 17) + 3;
 
@@ -124,13 +126,13 @@ class HorizonController extends EventEmitter {
 		// Set timeout
 		const ssdpClient = new Ssdp({ 'explicitSocketBind': true });
 		const ssdpTimeout = setTimeout(() => {
-			Debug('  - Timeout occured after ' + minutes + seconds + '!');
 			clearTimeout(ssdpTimeout);
-			this.emit('disconnected');
+
+			Debug('  - Timeout occured after ' + minutes + seconds + '!');
+			_this.boxDisconnected('BOX_NOT_FOUND');
 		}, millis);
 
 		// Start search
-		var _this = this;
 		ssdpClient.on('response', (headers, statusCode, rinfo) => {
 			// If we get a redsonic user agent ...
 			if (headers['X-USER-AGENT'] == 'redsonic') {
@@ -193,6 +195,22 @@ class HorizonController extends EventEmitter {
 		this.connectionState = ConnectionState.DISCONNECTED;
 		this.socket = new Net.Socket();
 		this.socket.setKeepAlive(true, 5000);
+		this.socket.setTimeout(0);
+
+		this.socket.on('error', (ex) => {
+			_this.emit('error', ex);
+
+			if (ex.code === 'ECONNREFUSED') {
+				_this.boxDisconnected('BOX_CONNECTION_REFUSED');
+				return;
+			}
+
+			if (ex.code === 'ECONNRESET') {
+				_this.boxDisconnected('BOX_CONNECTION_RESET');
+				return;
+			}
+		});
+
 		this.socket.on('data', (data) => {
 			var datastring = data.toString();
 			var buffer = data.toJSON(data);
@@ -228,24 +246,17 @@ class HorizonController extends EventEmitter {
 			}
 		});
 
-		this.socket.on('close', () => {
-			_this.connectionState = ConnectionState.DISCONNECTED;
-			Debug('* Disconnected ... reconnecting after ' + _this.reconnectDelay + ' seconds.');
-			_this.emit('disconnected');
-		});
-
-		this.socket.on('error', (ex) => {
-			if ((ex.code === 'ECONNREFUSED') || (ex.code === 'ECONNRESET')) {
-				_this.connectionState = ConnectionState.DISCONNECTED;
-				Debug('* Error connecting ... reconnecting after ' + _this.reconnectDelay + ' seconds.');
-				_this.emit('disconnected');
-			} else {
-				_this.emit('error', ex);
-			}
-		});
+		this.socket.on('timeout', this.boxDisconnected.bind('BOX_CONNECTION_TIMEOUT'));
+		this.socket.on('end', this.boxDisconnected.bind('BOX_CONNECTION_CLOSED'));
+		this.socket.on('close', this.boxDisconnected.bind('BOX_CONNECTION_CLOSED'));
 
 		// Make the actual connection
 		this.socket.connect(5900, this.mediaboxIp);
+	}
+
+	boxDisconnected(reason) {
+		this.connectionState = ConnectionState.DISCONNECTED;
+		this.emit('disconnected', reason);
 	}
 
 	addCommands(cmds) {
@@ -256,8 +267,7 @@ class HorizonController extends EventEmitter {
 	sendCommands() {
 		var _this = this;
 		if (this.connectionState == ConnectionState.DISCONNECTED) {
-			Debug('* Disconnected!');
-			_this.emit('disconnected');
+			_this.boxDisconnected('BOX_CONNECTION_CLOSED');
 			return;
 		}
 

@@ -107,7 +107,8 @@ horizonController.on('connected',  () => {
 	Debug('* Neeo app to search for a new device called "Horizon Mediabox XL".');
 });
 
-horizonController.on('disconnected', () => {
+horizonController.on('disconnected', (reason) => {
+	Debug('* No connection to MediaBox (' + reason + '). Trying to reconnect after ' + horizonController.reconnectDelay + ' seconds ...');
 	var reconnectTimer = setTimeout(() => {
 		clearTimeout(reconnectTimer);
 		horizonController.findBox();
