@@ -3,7 +3,7 @@
 // Constants
 const Debug = require('debug')('ziggo-horizon:main');
 const Util = require('util');
-Debug.log = function () {
+Debug.log = () => {
 	process.stderr.write('[' + new Date().toISOString() + '] ' + Util.format.apply(Util, arguments) + '\n');
 }
 const Config = require('./config-has');
@@ -12,7 +12,7 @@ const Config = require('./config-has');
 var horizonController;
 
 // Methods
-function exitHandler(options, err) {
+var exitHandler = (options, err) => {
 	if (options.cleanup) {
 		// Perform cleanup tasks
 	}
@@ -54,7 +54,7 @@ Debug('  - OK');
 
 // Start script
 horizonController = new HorizonController();
-horizonController.on('found', function (ip) {
+horizonController.on('found', (ip) => {
 	Debug('* Searching for NEEO Brain (max 10 sec.)');
 	const neeoTimeout = setTimeout(() => {
 		Debug('  - Failed');
@@ -101,17 +101,22 @@ horizonController.on('found', function (ip) {
 		});
 });
 
-horizonController.on('connected', function () {
+horizonController.on('connected',  () => {
 	Debug('* We are ready to control your Horizon Mediabox XL!');
 	Debug('* If this is the first time you start this driver, you can use the');
 	Debug('* Neeo app to search for a new device called "Horizon Mediabox XL".');
 });
 
-horizonController.on('disconnected', function () {
+horizonController.on('disconnected', () => {
 	var reconnectTimer = setTimeout(() => {
 		clearTimeout(reconnectTimer);
 		horizonController.findBox();
 	}, horizonController.reconnectDelay);
+});
+
+horizonController.on('error', (ex) => {
+	Debug('An error occured!');
+	Debug(ex);
 });
 
 horizonController.findBox();

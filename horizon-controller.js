@@ -2,7 +2,7 @@
 
 const Debug = require('debug')('ziggo-horizon:controller');
 const Util = require('util');
-Debug.log = function () {
+Debug.log = () => {
 	process.stderr.write('[' + new Date().toISOString() + '] ' + Util.format.apply(Util, arguments) + '\n');
 }
 const Config = require('./config-has');
@@ -15,7 +15,7 @@ const http = require('http');
 /**
  * Convert a hexadecimal string into its binary representation.
  */
-function Hex2Bin(s) {
+var Hex2Bin = (s) => {
 	return new Buffer(s, "hex");
 }
 
@@ -131,7 +131,7 @@ class HorizonController extends EventEmitter {
 
 		// Start search
 		var _this = this;
-		ssdpClient.on('response', function (headers, statusCode, rinfo) {
+		ssdpClient.on('response', (headers, statusCode, rinfo) => {
 			// If we get a redsonic user agent ...
 			if (headers['X-USER-AGENT'] == 'redsonic') {
 				// We download the description XML ...
@@ -159,7 +159,7 @@ class HorizonController extends EventEmitter {
 						try {
 							// We parse the result ...
 							var parseString = require('xml2js').parseString;
-							parseString(rawData, function (err, result) {
+							parseString(rawData, (err, result) => {
 								// ... and if all goes well, we have found a box
 								var modelName = result.root.device[0].modelName[0];
 								var modelDescription = result.root.device[0].modelDescription[0];
@@ -193,7 +193,7 @@ class HorizonController extends EventEmitter {
 		this.connectionState = ConnectionState.DISCONNECTED;
 		this.socket = new Net.Socket();
 		this.socket.setKeepAlive(true, 5000);
-		this.socket.on('data', function (data) {
+		this.socket.on('data', (data) => {
 			var datastring = data.toString();
 			var buffer = data.toJSON(data);
 
@@ -228,19 +228,19 @@ class HorizonController extends EventEmitter {
 			}
 		});
 
-		this.socket.on('close', function () {
+		this.socket.on('close', () => {
 			_this.connectionState = ConnectionState.DISCONNECTED;
 			Debug('* Disconnected ... reconnecting after ' + _this.reconnectDelay + ' seconds.');
 			_this.emit('disconnected');
 		});
 
-		this.socket.on('error', function (ex) {
-			_this.emit('error', ex);
-
-			if (ex.code === 'ECONNREFUSED') {
+		this.socket.on('error', (ex) => {
+			if ((ex.code === 'ECONNREFUSED') || (ex.code === 'ECONNRESET')) {
 				_this.connectionState = ConnectionState.DISCONNECTED;
 				Debug('* Error connecting ... reconnecting after ' + _this.reconnectDelay + ' seconds.');
 				_this.emit('disconnected');
+			} else {
+				_this.emit('error', ex);
 			}
 		});
 
@@ -264,9 +264,9 @@ class HorizonController extends EventEmitter {
 		var _this = this;
 		var cmds = this.socketCmds;
 		this.socketCmds = [];
-		Promise.mapSeries(cmds, function (cmd) {
+		Promise.mapSeries(cmds, (cmd) => {
 			_this.socket.write(Hex2Bin("040100000000" + cmd));
-			return Promise.delay(keyDelay).then(function () {
+			return Promise.delay(keyDelay).then(() => {
 				_this.socket.write(Hex2Bin("040000000000" + cmd));
 			}).delay(keyDelay);
 		});
@@ -274,14 +274,14 @@ class HorizonController extends EventEmitter {
 
 	isPoweredOn() {
 		var _this = this;
-		return new Promise(function (resolve, reject) {
-			var request = http.get('http://' + _this.mediaboxIp + ':62137/DeviceDescription.xml', function (res) {
+		return new Promise((resolve, reject) => {
+			var request = http.get('http://' + _this.mediaboxIp + ':62137/DeviceDescription.xml', (res) => {
 				resolve();
-			}).on('error', function (e) {
-				reject();
+			}).on('error', (e) => {
+				reject(e);
 			});
-			request.setTimeout(2000, function () {
-				reject();
+			request.setTimeout(2000, () => {
+				reject('timeout');
 			});
 		})
 	}
