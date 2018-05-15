@@ -163,19 +163,23 @@ class HorizonController extends EventEmitter {
 							var parseString = require('xml2js').parseString;
 							parseString(rawData, (err, result) => {
 								// ... and if all goes well, we have found a box
-								var modelName = result.root.device[0].modelName[0];
-								var modelDescription = result.root.device[0].modelDescription[0];
-								if (modelName.startsWith('SMT-G74') && modelDescription.startsWith('UPC')) {
-									clearTimeout(ssdpTimeout);
-									_this.mediaboxIp = rinfo.address;
+								if (("device" in result.root) && ("modelName" in result.root.device[0]) && ("modelDescription" in result.root.device[0])) {
+									var modelName = result.root.device[0].modelName[0];
+									var modelDescription = result.root.device[0].modelDescription[0];
+									if (modelName.startsWith('SMT-G74') && modelDescription.startsWith('UPC')) {
+										clearTimeout(ssdpTimeout);
+										_this.mediaboxIp = rinfo.address;
 
-									Debug('  - Found a ' + modelDescription + ' (' + modelName + ')');
-									_this.emit('found', _this.mediaboxIp);
-									ssdpClient.stop();
+										Debug('  - Found a ' + modelDescription + ' (' + modelName + ')');
+										_this.emit('found', _this.mediaboxIp);
+										ssdpClient.stop();
+									}
 								}
 							});
 						} catch (e) {
 							console.error(`Got error: ${e.message}`);
+							console.log(rawData);
+							process.exit(1);
 						}
 					});
 				}).on('error', (e) => {
