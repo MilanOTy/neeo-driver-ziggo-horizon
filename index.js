@@ -3,7 +3,7 @@
 // Constants
 const Debug = require('debug')('ziggo-horizon:main');
 const Util = require('util');
-Debug.log = () => {
+Debug.log = function() {
 	process.stderr.write('[' + new Date().toISOString() + '] ' + Util.format.apply(Util, arguments) + '\n');
 }
 const Config = require('./config-has');
@@ -12,7 +12,7 @@ const Config = require('./config-has');
 var horizonController;
 
 // Methods
-var exitHandler = (options, err) => {
+function exitHandler(options, err) {
 	if (options.cleanup) {
 		// Perform cleanup tasks
 	}
