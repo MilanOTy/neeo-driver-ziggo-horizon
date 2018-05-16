@@ -1,20 +1,16 @@
 {
-	"Driver": {
-		"ServerPort": 6336,
-		"SsdpTimeout": 15000
-	},
-	"Mediabox": {
-		"IP": ""
-	},
-	"Neeo": {
-		"UI": {
-			"Label": {
-				"Guide": "TV Gids",
-				"OnDemand": "On Demand",
-				"Help": "Help",
-				"Info": "Informatie",
-				"Text": "Teletekst"
-			}
+	"ziggoHorizon": {
+		"PreConfiguredMediaboxes": [ { "id": "someUniqueValue", "label": "Some descriptive label", "ip": "127.0.0.1" } ],
+		"Discovery": {
+			"Header": "Prepare your mediabox(es)",
+			"Description": "Make sure the Mediaboxes you want to discover are connected to your home network."
+		},
+		"UiLabels": {
+			"Guide": "TV Gids",
+			"OnDemand": "On Demand",
+			"Help": "Help",
+			"Info": "Informatie",
+			"Text": "Teletekst"
 		}
 	}
 }

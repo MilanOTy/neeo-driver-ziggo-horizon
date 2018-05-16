@@ -7,14 +7,15 @@
     "bluebird": "^3.5.1",
     "config": "^1.28.1",
     "debug": "^3.1.0",
-    "neeo-sdk": "^0.47.8",
+    "neeo-sdk": "github:NEEOInc/neeo-sdk#next",
     "net": "^1.0.2",
     "node-ssdp": "^3.2.5",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "neeo-sdk start"
   },
   "repository": {
     "type": "git",
@@ -28,5 +29,9 @@
   "engines": {
     "node": ">=6.0.0"
   },
-  "homepage": "https://github.com/Webunity/ziggo-horizon#readme"
+  "homepage": "https://github.com/Webunity/ziggo-horizon#readme",
+  "neeoSdkOptions": {
+    "serverName": "ziggo-horizon",
+    "serverPort": 6336
+  }
 }
