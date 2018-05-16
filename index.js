@@ -3,7 +3,7 @@
 // Constants
 const Debug = require('debug')('ziggo-horizon:main');
 const Util = require('util');
-Debug.log = function() {
+Debug.log = function () {
 	process.stderr.write('[' + new Date().toISOString() + '] ' + Util.format.apply(Util, arguments) + '\n');
 }
 const Config = require('./config-has');
@@ -101,7 +101,7 @@ horizonController.on('found', (ip) => {
 		});
 });
 
-horizonController.on('connected',  () => {
+horizonController.on('connected', () => {
 	Debug('* We are ready to control your Horizon Mediabox XL!');
 	Debug('* If this is the first time you start this driver, you can use the');
 	Debug('* Neeo app to search for a new device called "Horizon Mediabox XL".');

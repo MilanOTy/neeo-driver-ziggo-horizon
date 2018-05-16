@@ -2,7 +2,7 @@
 
 const Debug = require('debug')('ziggo-horizon:controller');
 const Util = require('util');
-Debug.log = () => {
+Debug.log = function () {
 	process.stderr.write('[' + new Date().toISOString() + '] ' + Util.format.apply(Util, arguments) + '\n');
 }
 const Config = require('./config-has');
@@ -15,7 +15,7 @@ const http = require('http');
 /**
  * Convert a hexadecimal string into its binary representation.
  */
-var Hex2Bin = (s) => {
+function Hex2Bin(s) {
 	return new Buffer(s, "hex");
 }
 
@@ -125,7 +125,7 @@ class HorizonController extends EventEmitter {
 
 		// Set timeout
 		const ssdpClient = new Ssdp({ 'explicitSocketBind': true });
-		const ssdpTimeout = setTimeout(() => {
+		const ssdpTimeout = setTimeout(function () {
 			clearTimeout(ssdpTimeout);
 
 			Debug('  - Timeout occured after ' + minutes + seconds + '!');
@@ -133,11 +133,11 @@ class HorizonController extends EventEmitter {
 		}, millis);
 
 		// Start search
-		ssdpClient.on('response', (headers, statusCode, rinfo) => {
+		ssdpClient.on('response', function (headers, statusCode, rinfo) {
 			// If we get a redsonic user agent ...
 			if (headers['X-USER-AGENT'] == 'redsonic') {
 				// We download the description XML ...
-				http.get(headers['LOCATION'], (res) => {
+				http.get(headers['LOCATION'], function (res) {
 					const { statusCode } = res;
 					const contentType = res.headers['content-type'];
 
@@ -156,12 +156,12 @@ class HorizonController extends EventEmitter {
 
 					res.setEncoding('utf8');
 					let rawData = '';
-					res.on('data', (chunk) => { rawData += chunk; });
-					res.on('end', () => {
+					res.on('data', function (chunk) { rawData += chunk; });
+					res.on('end', function () {
 						try {
 							// We parse the result ...
 							var parseString = require('xml2js').parseString;
-							parseString(rawData, (err, result) => {
+							parseString(rawData, function (err, result) {
 								// ... and if all goes well, we have found a box
 								if (("device" in result.root) && ("modelName" in result.root.device[0]) && ("modelDescription" in result.root.device[0])) {
 									var modelName = result.root.device[0].modelName[0];
@@ -182,7 +182,7 @@ class HorizonController extends EventEmitter {
 							process.exit(1);
 						}
 					});
-				}).on('error', (e) => {
+				}).on('error', function (e) {
 					console.error(`Got error: ${e.message}`);
 				});
 			}
@@ -201,7 +201,7 @@ class HorizonController extends EventEmitter {
 		this.socket.setKeepAlive(true, 5000);
 		this.socket.setTimeout(0);
 
-		this.socket.on('error', (ex) => {
+		this.socket.on('error', function (ex) {
 			_this.emit('error', ex);
 
 			if (ex.code === 'ECONNREFUSED') {
@@ -215,7 +215,7 @@ class HorizonController extends EventEmitter {
 			}
 		});
 
-		this.socket.on('data', (data) => {
+		this.socket.on('data', function (data) {
 			var datastring = data.toString();
 			var buffer = data.toJSON(data);
 
@@ -278,9 +278,9 @@ class HorizonController extends EventEmitter {
 		var _this = this;
 		var cmds = this.socketCmds;
 		this.socketCmds = [];
-		Promise.mapSeries(cmds, (cmd) => {
+		Promise.mapSeries(cmds, function (cmd) {
 			_this.socket.write(Hex2Bin("040100000000" + cmd));
-			return Promise.delay(keyDelay).then(() => {
+			return Promise.delay(keyDelay).then(function () {
 				_this.socket.write(Hex2Bin("040000000000" + cmd));
 			}).delay(keyDelay);
 		});
@@ -362,7 +362,7 @@ class HorizonController extends EventEmitter {
 		if (btn.substr(0, 5) == 'DIGIT') {
 			// Reset timer
 			clearTimeout(this.digitTimer);
-			this.digitTimer = setTimeout(() => {
+			this.digitTimer = setTimeout(function () {
 				this.selectChannel();
 			}, 1000);
 
