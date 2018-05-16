@@ -286,28 +286,28 @@ class HorizonController extends EventEmitter {
 		});
 	}
 
-	isPoweredOn() {
+	getPowerState() {
 		var _this = this;
-		return new Promise((resolve, reject) => {
-			var request = http.get('http://' + _this.mediaboxIp + ':62137/DeviceDescription.xml', (res) => {
-				resolve();
-			}).on('error', (e) => {
-				reject(e);
+		return new Promise(function (resolve, reject) {
+			var request = http.get('http://' + _this.mediaboxIp + ':62137/DeviceDescription.xml', function (res) {
+				resolve(true);
+			}).on('error', function (e) {
+				resolve(false);
 			});
-			request.setTimeout(2000, () => {
-				reject('timeout');
+			request.setTimeout(2000, function () {
+				resolve(false);
 			});
 		})
 	}
 
-	powerOn() {
+	powerToggleIfNotState(desiredPowerState) {
 		var _this = this;
-		this.isPoweredOn().then(() => { }, () => { _this.powerToggle(); });
-	}
-
-	powerOff() {
-		var _this = this;
-		this.isPoweredOn().then(() => { _this.powerToggle(); }, () => { });
+		this.getPowerState()
+			.then(function (currentPowerState) {
+				if (currentPowerState !== desiredPowerState) {
+					_this.powerToggle();
+				}
+			});
 	}
 
 	powerToggle() {
@@ -343,10 +343,10 @@ class HorizonController extends EventEmitter {
 		if (!(btn in buttonMapping)) {
 			switch (btn) {
 				case 'POWER_ON':
-					this.powerOn();
+					this.powerToggleIfNotState(true);
 					break;
 				case 'POWER_OFF':
-					this.powerOff();
+					this.powerToggleIfNotState(false);
 					break;
 				default:
 					Debug(`${btn} button pressed which is not mapped!`);
