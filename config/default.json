@@ -1,9 +1,12 @@
 {
-	"ziggoHorizon": {
-		"PreConfiguredMediaboxes": [ { "id": "someUniqueValue", "label": "Some descriptive label", "ip": "127.0.0.1" } ],
+	"ziggoHorizon": {		
 		"Discovery": {
 			"Header": "Prepare your mediabox(es)",
-			"Description": "Make sure the Mediaboxes you want to discover are connected to your home network."
+			"Description": "Make sure the Mediaboxes you want to discover are connected to your home network.",
+			"SsdpEnabled": true,
+			"SsdpTimeout": 10000,
+			"SsdpRediscovery": -1,
+			"KnownMediaboxes": [ ]
 		},
 		"UiLabels": {
 			"Guide": "TV Gids",

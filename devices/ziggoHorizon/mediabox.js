@@ -1,12 +1,9 @@
 'use strict';
 
 // Supporting debug modules
-const Config = require('../config-has');
-const Util = require('util');
-const Debug = require('debug')('ziggo-horizon:mediabox-xl');
-Debug.log = function () {
-	process.stderr.write('[' + new Date().toISOString() + '] ' + Util.format.apply(Util, arguments) + '\n');
-}
+const NeeoHelper = require('../NeeoHelper');
+const Helper = new NeeoHelper('ziggo-horizon:mediabox');
+
 
 // 3rd party modules
 const EventEmitter = require('events');
@@ -18,16 +15,9 @@ const http = require('http');
 const CONSTANTS = require('./constants');
 
 /**
- * Convert a hexadecimal string into its binary representation.
- */
-function Hex2Bin(s) {
-	return new Buffer(s, "hex");
-}
-
-/**
  * Main class
  */
-class MediaboxXl extends EventEmitter {
+class Mediabox extends EventEmitter {
 	constructor(label, ip) {
 		super();
 
@@ -44,9 +34,13 @@ class MediaboxXl extends EventEmitter {
 		return this.label;
 	}
 
+	getIp() {
+		return this.ip;
+	}
+
 	isReachable() {
 		return true;
 	}
 }
 
-module.exports = MediaboxXl;
+module.exports = Mediabox;
