@@ -24,7 +24,7 @@ class NeeoHelper {
 	ConfigHasOr(key, fallback) {
 		return (Config.has(key) ? Config.get(key) : fallback);
 	}
-	
+
 	/**
 	 *
 	 */
@@ -37,13 +37,20 @@ class NeeoHelper {
 	 */
 	IsObject(obj) {
 		return (Object.prototype.toString.call(obj) === '[object Object]');
-	}	
+	}
 
 	/**
 	 * Convert a hexadecimal string into its binary representation.
 	 */
 	Hex2Bin(s) {
 		return new Buffer(s, "hex");
+	}
+
+	/**
+	 *
+	 */
+	Sleep(ms) {
+  		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 }
 
