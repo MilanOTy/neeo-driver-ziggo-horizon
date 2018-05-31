@@ -1,5 +1,5 @@
 {
-	"ziggoHorizon": {		
+	"ziggoHorizon": {
 		"Discovery": {
 			"Header": "Prepare your mediabox(es)",
 			"Description": "Make sure the Mediaboxes you want to discover are connected to your home network.",
@@ -9,11 +9,11 @@
 			"KnownMediaboxes": [ ]
 		},
 		"UiLabels": {
-			"Guide": "TV Gids",
+			"Guide": "Guide",
 			"OnDemand": "On Demand",
 			"Help": "Help",
-			"Info": "Informatie",
-			"Text": "Teletekst"
+			"Info": "Info",
+			"Text": "Text"
 		}
 	}
 }
