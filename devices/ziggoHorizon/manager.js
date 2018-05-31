@@ -112,7 +112,7 @@ class Manager extends EventEmitter {
 			clearTimeout(_this.ssdpDiscoveryTimer);
 
 			// Set timeout
-			var millis = Helper.ConfigHasOr('ziggoHorizon.Discovery.SsdpTimeout', 15000);
+			var millis = (Helper.ConfigHasOr('ziggoHorizon.Discovery.SsdpTimeout', 15) * 1000);
 			var minutes = Math.floor(millis / 60000);
 			minutes = (minutes == 0) ? '' : (minutes + ' minute' + ((minutes > 1) ? 's' : ''));
 
@@ -130,7 +130,8 @@ class Manager extends EventEmitter {
 				
 				var ssdpRediscoveryDelay = Helper.ConfigHasOr('ziggoHorizon.Discovery.SsdpRediscovery', -1);
 				if (ssdpRediscoveryDelay !== -1) {
-					_this.ssdpDiscoveryTimer = setTimeout(_this.DiscoverBoxes.bind(_this), Helper.ConfigHasOr('ziggoHorizon.Discovery.SsdpRediscovery', 300000));
+					ssdpRediscoveryDelay = Math.max(ssdpRediscoveryDelay, 10);
+					_this.ssdpDiscoveryTimer = setTimeout(_this.DiscoverBoxes.bind(_this), ssdpRediscoveryDelay * 1000);
 				}
 			}, millis);
 

@@ -4,7 +4,7 @@
 			"Header": "Prepare your mediabox(es)",
 			"Description": "Make sure the Mediaboxes you want to discover are connected to your home network.",
 			"SsdpEnabled": true,
-			"SsdpTimeout": 10000,
+			"SsdpTimeout": 10,
 			"SsdpRediscovery": -1,
 			"KnownMediaboxes": [ ]
 		},
