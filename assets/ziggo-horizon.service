@@ -1,0 +1,15 @@
+[Unit]
+Description=Ziggo Horizon Mediabox XL driver for your Neeo remote(s)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+WorkingDirectory=/opt/neeo/ziggo-horizon
+ExecStart=/opt/neeo/ziggo-horizon/node_modules/.bin/neeo-sdk start
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=control-group
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
