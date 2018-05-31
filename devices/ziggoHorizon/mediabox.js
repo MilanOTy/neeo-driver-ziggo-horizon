@@ -280,9 +280,7 @@ class Mediabox {
 		if (btn.substr(0, 5) == 'DIGIT') {
 			// Reset timer
 			clearTimeout(this.digitTimer);
-			this.digitTimer = setTimeout(function () {
-				this.selectChannel();
-			}, 1500);
+			this.digitTimer = setTimeout(this.selectChannel.bind(this), 1500);
 
 			// Add this digit to the stack
 			this.digits.push(cmd);
