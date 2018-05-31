@@ -69,11 +69,12 @@ class Mediabox {
 	 *
 	 */
 	connect() {
-		clearTimeout(this.connectTimer);
 		this.debug('Connecting to ' + this.getIp() + ' (max. 10 seconds) ...');
+		clearTimeout(this.connectTimer);
 
 		// Set a timeout after 10 seconds
 		this.connectionTimeout = setTimeout(function() {
+			clearTimeout(_this.connectionTimeout);
 			_this.socket.removeAllListeners('close');
 			_this.socket.destroy();
 			_this.disconnected('BOX_CONNECTION_NOT_POSSIBLE');
@@ -151,6 +152,7 @@ class Mediabox {
 	 *
 	 */
 	disconnected(reason) {
+		clearTimeout(this.connectionTimeout);
 		this.connectionState = CONSTANTS.CONNECTION_STATE.DISCONNECTED;
 		this.debug('Disconnected (' + reason + ')');
 
