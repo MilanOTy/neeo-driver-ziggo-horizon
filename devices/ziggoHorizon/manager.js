@@ -95,7 +95,6 @@ class Manager extends EventEmitter {
 				return;
 			}
 
-			_this.discover
 			_this.DiscoverBoxes().then((result) => {
 				resolve(_this.mediaBoxes);
 			}).catch((err) => {
@@ -203,17 +202,23 @@ class Manager extends EventEmitter {
 	/**
 	 *
 	 */
-	GetFoundMediaBoxesForNeeo() {
-		var discoveredDevicesForNeeoApp = [];
-		for (var idx in this.mediaBoxes) {
-			discoveredDevicesForNeeoApp.push({
-				id: idx,
-				name: this.mediaBoxes[idx].getLabel(),
-				reachable: this.mediaBoxes[idx].isReachable()
+	GetDevicesForNeeo() {
+		var _this = this;
+		return new Promise(function (resolve, reject) {
+			_this.LoadAndDiscoverBoxes().then((result) => {
+				var neeoDevices = [];
+				for (var idx in _this.mediaBoxes) {
+					neeoDevices.push({
+						id: idx,
+						name: _this.mediaBoxes[idx].getLabel(),
+						reachable: _this.mediaBoxes[idx].isReachable()
+					});
+				}
+				resolve(neeoDevices);
+			}).catch((err) => {
+				resolve([ ]);
 			});
-		}
-		Helper.Debug(discoveredDevicesForNeeoApp);
-		return discoveredDevicesForNeeoApp;
+		});
 	}
 
 	/**

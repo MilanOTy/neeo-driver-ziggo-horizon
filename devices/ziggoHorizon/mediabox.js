@@ -75,9 +75,9 @@ class Mediabox {
 		// Set a timeout after 10 seconds
 		this.connectionTimeout = setTimeout(function() {
 			_this.socket.removeAllListeners('close');
-            _this.socket.destroy();
-            _this.disconnected('BOX_CONNECTION_NOT_POSSIBLE');
-        }, 10000);
+			_this.socket.destroy();
+			_this.disconnected('BOX_CONNECTION_NOT_POSSIBLE');
+		}, 10000);
 
 		// Keep track of socket state
 		var _this = this;
@@ -239,7 +239,7 @@ class Mediabox {
 		for (var i = 0; i < cmds.length; i++) {
 			channel += cmds[i].substr(3, 1);
 		}
-		Helper.Debug('    - Switch to channel: ' + channel);
+		Helper.Debug('	- Switch to channel: ' + channel);
 
 		// Send the command
 		this.addCommands(cmds);

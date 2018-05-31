@@ -35,12 +35,7 @@ const horizonController = NeeoSdk.buildDevice('Horizon Mediabox XL')
 	.enableDiscovery({
 		  headerText: Helper.ConfigHasOr('ziggoHorizon.Discovery.Header', 'Prepare your mediabox(es)'),
 		  description: Helper.ConfigHasOr('ziggoHorizon.Discovery.Description', 'Make sure the Mediaboxes you want to discover are connected to your home network.')
-		}, MediaboxManager.GetFoundMediaBoxesForNeeo);
-
-// DEBUG
-MediaboxManager.LoadAndDiscoverBoxes().then((result) => {
-	MediaboxManager.GetFoundMediaBoxesForNeeo();
-});
+		}, MediaboxManager.GetDevicesForNeeo);
 
 // Module export
 module.exports = horizonController;
