@@ -57,5 +57,4 @@ module.exports = {
 		RC_PAIR: 'ef17', // RC PAIRING
 		TIMINGS: 'ef19' // TIMINGS
 	}
-
 };
