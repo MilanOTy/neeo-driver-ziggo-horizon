@@ -23,6 +23,10 @@ class Manager extends EventEmitter {
 		super();
 		this.mediaBoxes = { };
 		this.ssdpDiscoveryTimer = 0;
+		this.ssdpEnabled = Helper.ConfigHasOr('ziggoHorizon.Discovery.SsdpEnabled', false);
+		this.ssdpTimeout = Helper.ConfigHasOr('ziggoHorizon.Discovery.SsdpTimeout', 15) * 1000;
+		this.ssdpRediscovery = Helper.ConfigHasOr('ziggoHorizon.Discovery.SsdpRediscovery', -1);
+		this.knownMediaboxes = Helper.ConfigHasOr('ziggoHorizon.Discovery.KnownMediaboxes', []);
 
 		// process handlers
 		process.on('exit', this.exitHandler.bind(null, { cleanup: true }));
@@ -75,7 +79,7 @@ class Manager extends EventEmitter {
 		var _this = this;
 		return new Promise(function (resolve, reject) {
 			// Get pre-configured mediaboxes from the config/default.json
-			var preConfiguredMediaboxes = Helper.ConfigHasOr('ziggoHorizon.Discovery.KnownMediaboxes', []);
+			var preConfiguredMediaboxes = _this.knownMediaboxes;
 			if (Helper.IsArray(preConfiguredMediaboxes) && (preConfiguredMediaboxes.length > 0)) {
 				// Make sure the objects in the JSON are correctly configured
 				if (!preConfiguredMediaboxes.every(item => item.hasOwnProperty('uniqueId') && item.hasOwnProperty('label') && item.hasOwnProperty('ip'))) {
@@ -88,14 +92,7 @@ class Manager extends EventEmitter {
 				}
 			}
 
-			// If we do not need to SSDP discovery we are already done
-			if (Helper.ConfigHasOr('ziggoHorizon.Discovery.SsdpEnabled', false) === false) {
-				Helper.Debug('SSDP discovery disabled, therefore we seem to be done...');
-				resolve();
-				return;
-			}
-
-			_this.DiscoverBoxes().then((result) => {
+			_this.DiscoverBoxes().then(() => {
 				resolve(_this.mediaBoxes);
 			}).catch((err) => {
 				resolve(_this.mediaBoxes);
@@ -111,29 +108,33 @@ class Manager extends EventEmitter {
 		return new Promise(function (resolve, reject) {
 			clearTimeout(_this.ssdpDiscoveryTimer);
 
+			// If we do not need to SSDP discovery we are already done
+			if (!_this.ssdpEnabled) {
+				Helper.Debug('SSDP discovery disabled, therefore we seem to be done...');
+				resolve();
+				return;
+			}
+
 			// Set timeout
-			var millis = (Helper.ConfigHasOr('ziggoHorizon.Discovery.SsdpTimeout', 15) * 1000);
-			var minutes = Math.floor(millis / 60000);
+			var minutes = Math.floor(_this.ssdpTimeout / 60000);
 			minutes = (minutes == 0) ? '' : (minutes + ' minute' + ((minutes > 1) ? 's' : ''));
 
-			var seconds = ((millis % 60000) / 1000).toFixed(0);
+			var seconds = ((_this.ssdpTimeout % 60000) / 1000).toFixed(0);
 			seconds = (seconds == 0) ? '' : (seconds + ' second' + ((seconds > 1) ? 's' : ''));
 			if ((minutes != '') && (seconds != '')) {
 				minutes = minutes + ' and ';
 			}
 
 			const ssdpClient = new Ssdp({ 'explicitSocketBind': true });
-			const ssdpTimeout = setTimeout(function () {
-				clearTimeout(ssdpTimeout);
+			const ssdpTimeoutTimer = setTimeout(function () {
+				clearTimeout(ssdpTimeoutTimer);
 				ssdpClient.stop();
 				resolve(_this.mediaBoxes);
 				
-				var ssdpRediscoveryDelay = Helper.ConfigHasOr('ziggoHorizon.Discovery.SsdpRediscovery', -1);
-				if (ssdpRediscoveryDelay !== -1) {
-					ssdpRediscoveryDelay = Math.max(ssdpRediscoveryDelay, 10);
-					_this.ssdpDiscoveryTimer = setTimeout(_this.DiscoverBoxes.bind(_this), ssdpRediscoveryDelay * 1000);
+				if (_this.ssdpRediscovery !== -1) {
+					_this.ssdpDiscoveryTimer = setTimeout(_this.DiscoverBoxes.bind(_this), Math.max(_this.ssdpRediscovery, 10) * 1000);
 				}
-			}, millis);
+			}, _this.ssdpTimeout);
 
 			ssdpClient.on('response', function (headers, statusCode, rinfo) {
 				// Check to make sure we only discover 'redsonic' with a valid XML

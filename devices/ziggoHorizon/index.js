@@ -11,6 +11,17 @@ const NeeoSdk = require('neeo-sdk');
 const Manager = require('./manager');
 const MediaboxManager = new Manager();
 
+/**
+ * Wrapper for discovery function
+ */
+function getDevicesForNeeoWrapper() {
+	return MediaboxManager.GetDevicesForNeeo().then((result) => {
+		return result;
+	}).catch((err) => {
+		return [];
+	});
+}
+
 // Set the device info, used to identify it on the Brain
 const horizonController = NeeoSdk.buildDevice('Horizon Mediabox XL')
 	.setManufacturer('Ziggo')
@@ -35,9 +46,7 @@ const horizonController = NeeoSdk.buildDevice('Horizon Mediabox XL')
 	.enableDiscovery({
 		  headerText: Helper.ConfigHasOr('ziggoHorizon.Discovery.Header', 'Prepare your mediabox(es)'),
 		  description: Helper.ConfigHasOr('ziggoHorizon.Discovery.Description', 'Make sure the Mediaboxes you want to discover are connected to your home network.')
-		}, MediaboxManager.GetDevicesForNeeo);
-
-MediaboxManager.GetDevicesForNeeo();
+		}, getDevicesForNeeoWrapper);
 
 // Module export
 module.exports = horizonController;
