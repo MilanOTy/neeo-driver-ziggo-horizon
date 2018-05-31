@@ -255,6 +255,7 @@ class Mediabox {
 	onButtonPressed(btn) {
 		// Don't know if this is needed but it makes testing easier.
 		btn = btn.toUpperCase().replace(/ /g, '_');
+		this.debug('Button pressed: ' + btn);
 
 		// Some custom command or unmapped command
 		if (!(btn in CONSTANTS.BUTTON)) {
@@ -266,7 +267,7 @@ class Mediabox {
 					this.powerToggleIfNotState(false);
 					break;
 				default:
-					this.debug(`error! ${btn} button pressed which is not mapped!`);
+					this.debug('^ BUTTON NOT MAPPED!');
 					break;
 			}
 			return;
@@ -299,7 +300,6 @@ class Mediabox {
 			this.digits = [];
 		}
 
-		this.debug(`${btn} button pressed, resulting in ${cmd}`);
 		this.addCommands([ cmd ]);
 	}
 }

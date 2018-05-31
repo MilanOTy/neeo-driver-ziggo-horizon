@@ -226,12 +226,12 @@ class Manager extends EventEmitter {
 	/**
 	 *
 	 */
-	ButtonHandler(name, deviceId) {
+	ButtonPressed(deviceId, button) {
 		if (!(deviceId in this.mediaBoxes)) {
-			Helper.Debug('ButtonHandler: No device with deviceId \'' + deviceId + '\' found.');
+			Helper.Debug('- deviceId not found.');
 			return;
 		}
-		this.mediaBoxes[deviceId].onButtonPressed(name);
+		this.mediaBoxes[deviceId].onButtonPressed(button);
 	}
 }
 

@@ -22,6 +22,14 @@ function getDevicesForNeeoWrapper() {
 	});
 }
 
+/**
+ * Wrapper for button handler
+ */
+function buttonHandler(button, deviceId) {
+	MediaboxManager.ButtonPressed(deviceId, button);
+}
+
+
 // Set the device info, used to identify it on the Brain
 const horizonController = NeeoSdk.buildDevice('Horizon Mediabox XL')
 	.setManufacturer('Ziggo')
@@ -42,11 +50,13 @@ const horizonController = NeeoSdk.buildDevice('Horizon Mediabox XL')
 	.addButton({ name: 'HELP', label: Helper.ConfigHasOr('ziggoHorizon.UiLabels.Help', 'Help') })
 	.addButton({ name: 'INFO', label: Helper.ConfigHasOr('ziggoHorizon.UiLabels.Info', 'Info') })
 	.addButton({ name: 'TEXT', label: Helper.ConfigHasOr('ziggoHorizon.UiLabels.Text', 'Text') })
-	.addButtonHandler(MediaboxManager.ButtonHandler)
+	.addButtonHandler(buttonHandler)
 	.enableDiscovery({
 		  headerText: Helper.ConfigHasOr('ziggoHorizon.Discovery.Header', 'Prepare your mediabox(es)'),
 		  description: Helper.ConfigHasOr('ziggoHorizon.Discovery.Description', 'Make sure the Mediaboxes you want to discover are connected to your home network.')
 		}, getDevicesForNeeoWrapper);
+
+MediaboxManager.GetDevicesForNeeo();
 
 // Module export
 module.exports = horizonController;
