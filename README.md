@@ -1,4 +1,4 @@
-# ziggo-horizon
+# Neeo-driver-ziggo-horizon
 The Dutch television provider Ziggo issues a so called 'Mediabox XL'. At the time of writing, this is either an SMT-C7400 or an SMT-C7401. Both devices don't have a discrete power on and power off command making them 'dumb devices' for the Neeo Remote.
 
 By writing a custom driver for the SMT-C7400 and SMT-C7401 based on work done by other developers, the SMT-C7400 and SMT-C7401 can be made 'smart'.
