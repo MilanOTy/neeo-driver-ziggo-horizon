@@ -1,14 +1,14 @@
 'use strict';
 
-// Supporting debug modules
-const NeeoHelper = require('../NeeoHelper');
-const Helper = new NeeoHelper('ziggo-horizon:main');
-
 // 3rd party modules
 const NeeoSdk = require('neeo-sdk');
 
+// Supporting debug modules
+const NeeoHelper = require('./lib/NeeoHelper');
+const Helper = new NeeoHelper('ziggo-horizon:main');
+
 // Start discovery object
-const Manager = require('./manager');
+const Manager = require('./lib/manager');
 const MediaboxManager = new Manager();
 
 /**
@@ -59,4 +59,8 @@ const horizonController = NeeoSdk.buildDevice('Horizon Mediabox XL')
 MediaboxManager.GetDevicesForNeeo();
 
 // Module export
-module.exports = horizonController;
+module.exports = {
+	devices: [
+		horizonController,
+	],
+  };
