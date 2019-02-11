@@ -4,12 +4,12 @@
   "description": "Custom driver for the SMT-C7400 and SMT-C7401 for the Neeo remote.",
   "main": "index.js",
   "dependencies": {
-    "bluebird": "^3.5.1",
-    "config": "^1.28.1",
-    "debug": "^3.1.0",
+    "bluebird": "^3.5.3",
+    "config": "^1.31.0",
+    "debug": "^3.2.6",
     "neeo-sdk": "^0.47.8",
     "net": "^1.0.2",
-    "node-ssdp": "^3.2.5",
+    "node-ssdp": "^3.3.0",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {},
