@@ -3,7 +3,7 @@ The Dutch television provider Ziggo issues a so called 'Mediabox XL'. At the tim
 
 By writing a custom driver for the SMT-C7400 and SMT-C7401 based on work done by other developers, the SMT-C7400 and SMT-C7401 can be made 'smart'.
 
-__NOTE: Starting with Neeo version 0.51.3 you can (only) use the Neeo CLI to run this driver. Instructions [can be found here](https://github.com/Webunity/ziggo-horizon/wiki/Running-this-driver)__
+__NOTE: Starting with Neeo version 0.51.3 you can (only) use the Neeo CLI to run this driver. Instructions [can be found here](https://github.com/Webunity/neeo-driver-ziggo-horizon/wiki/Running-this-driver)__
 
 ## Reading material found/used:
  - [Horizon Control](https://github.com/kuijp/horizoncontrol) (Java API wrapper)
@@ -16,4 +16,4 @@ __NOTE: Starting with Neeo version 0.51.3 you can (only) use the Neeo CLI to run
 Basically i will be combining the best of the above in creating the Neeo driver.
 
 ## The documentation is on the wiki
-Please refer to the [Wiki page](https://github.com/Webunity/ziggo-horizon/wiki/) for more information how you should setup your mediabox and configure this driver.
+Please refer to the [Wiki page](https://github.com/Webunity/neeo-driver-ziggo-horizon/wiki/) for more information how you should setup your mediabox and configure this driver.
