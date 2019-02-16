@@ -31,6 +31,7 @@ function buttonHandler(button, serialNumberOrUniqueId) {
 
 
 // Set the device info, used to identify it on the Brain
+// See constants.js for mapping of the 'addButtonGroup' stuff
 const horizonController = NeeoSdk.buildDevice('Horizon Mediabox XL')
 	.setManufacturer('Ziggo')
 	.addAdditionalSearchToken('ziggo')
@@ -41,10 +42,12 @@ const horizonController = NeeoSdk.buildDevice('Horizon Mediabox XL')
 	.addButtonGroup('Menu and Back')
 	.addButtonGroup('Controlpad')
 	.addButtonGroup('Channel Zapper')
+	.addButtonGroup('Volume')
 	.addButtonGroup('Numpad')
 	.addButtonGroup('Transport')
 	.addButtonGroup('Transport Search')
 	.addButtonGroup('Record')
+	.addButtonGroup('Color Buttons')
 	.addButton({ name: 'GUIDE', label: Helper.ConfigHasOr('ziggoHorizon.UiLabels.Guide', 'TV Guide') })
 	.addButton({ name: 'ONDEMAND', label: Helper.ConfigHasOr('ziggoHorizon.UiLabels.OnDemand', 'On Demand') })
 	.addButton({ name: 'HELP', label: Helper.ConfigHasOr('ziggoHorizon.UiLabels.Help', 'Help') })
