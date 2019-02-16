@@ -4,8 +4,8 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-WorkingDirectory=/opt/neeo/my-neeo-server
-ExecStart=npx neeo-cli start
+WorkingDirectory=/opt/neeo-server
+ExecStart=/opt/neeo-server/run-server.sh
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=control-group
 Restart=always
