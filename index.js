@@ -25,8 +25,8 @@ function getDevicesForNeeoWrapper() {
 /**
  * Wrapper for button handler
  */
-function buttonHandler(button, deviceId) {
-	MediaboxManager.ButtonPressed(deviceId, button);
+function buttonHandler(button, serialNumberOrUniqueId) {
+	MediaboxManager.ButtonPressed(serialNumberOrUniqueId, button);
 }
 
 
