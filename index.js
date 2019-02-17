@@ -25,6 +25,7 @@ function getDevicesForNeeoWrapper() {
 // Set the device info, used to identify it on the Brain
 // See constants.js for mapping of the 'addButtonGroup' stuff
 const horizonController = NeeoSdk.buildDevice('Horizon Mediabox XL')
+	.setDriverVersion(1)
 	.setManufacturer('Ziggo')
 	.addAdditionalSearchToken('ziggo')
 	.addAdditionalSearchToken('horizon')
