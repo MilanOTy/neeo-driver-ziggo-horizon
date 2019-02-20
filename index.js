@@ -24,8 +24,10 @@ function getDevicesForNeeoWrapper() {
 
 // Set the device info, used to identify it on the Brain
 // See constants.js for mapping of the 'addButtonGroup' stuff
-const horizonController = NeeoSdk.buildDevice('Horizon Mediabox XL')
-	.setDriverVersion(1)
+const deviceName = 'Horizon Mediabox XL';
+const deviceVersion = 1;
+const horizonController = NeeoSdk.buildDevice(deviceName)
+	.setDriverVersion(deviceVersion)
 	.setManufacturer('Ziggo')
 	.addAdditionalSearchToken('ziggo')
 	.addAdditionalSearchToken('horizon')
@@ -49,8 +51,9 @@ const horizonController = NeeoSdk.buildDevice('Horizon Mediabox XL')
 	.addButtonHandler((button, serialNumberOrUniqueId) => { MediaboxManager.ButtonPressed(serialNumberOrUniqueId, button); })
 	.registerFavoriteHandlers({ execute: (serialNumberOrUniqueId, favoriteId) => { MediaboxManager.FavoritePressed(serialNumberOrUniqueId, favoriteId); } })
 	.enableDiscovery({
-		  headerText: WebunitySdkHelper.ConfigHasOr('ziggoHorizon.Discovery.Header', 'Prepare your mediabox(es)'),
-		  description: WebunitySdkHelper.ConfigHasOr('ziggoHorizon.Discovery.Description', 'Make sure the Mediaboxes you want to discover are connected to your home network.')
+		  headerText: WebunitySdkHelper.ConfigHasOr('ziggoHorizon.Discovery.Header', 'Mediabox correctly prepared?'),
+		  description: WebunitySdkHelper.ConfigHasOr('ziggoHorizon.Discovery.Description', 'Make sure the Horizon Mediabox you want to add is connected to your home network, according to the instructions on GitHub.\nPlease look here for more info: https://bit.ly/2GBu82G\n\n(driver version: ' + deviceVersion + ')'),
+		  enableDynamicDeviceBuilder: false
 		}, getDevicesForNeeoWrapper);
 
 MediaboxManager.GetDevicesForNeeo();
