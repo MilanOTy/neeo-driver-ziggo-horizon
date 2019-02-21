@@ -1,26 +1,30 @@
 'use strict';
 
 // Supporting debug modules
-const NeeoSdkWebunity = require('neeo-sdk-webunity');
-const NeeoSdkHelper = new NeeoSdkWebunity('ziggo-horizon:main');
+const WebunitySdkHelperModule = require('./lib/webunitySdkHelper');
+const WebunitySdkHelper = new WebunitySdkHelperModule('ziggo-horizon:main');
+
+// 3rd party modules
+const Promise = require('bluebird');
 
 // Start discovery object
-const Manager = require('./lib/manager');
-const MediaboxManager = new Manager();
+const ManagerModule = require('./lib/manager');
+const MediaboxManager = new ManagerModule();
 MediaboxManager.on('BoxDiscovered', function(serialNumberOrUniqueId, modelName, modelDescription, ipAddress) {
-	NeeoSdkHelper.Debug('- Found a ' + modelName + ' (' + modelDescription + ') with serial number \'' + serialNumberOrUniqueId + '\' on IP \'' + ipAddress + '\'');
+	WebunitySdkHelper.Debug('- Found a ' + modelName + ' (' + modelDescription + ') with serial number \'' + serialNumberOrUniqueId + '\' on IP \'' + ipAddress + '\'');
 });
 MediaboxManager.on('SsdpDiscoveryStarted', function(minutes, seconds) {
-	NeeoSdkHelper.Debug('Initiating SSDP discovery for ' + minutes + (((minutes != '') && (seconds != '')) ? ' and ' : '') + seconds + '.');
+	WebunitySdkHelper.Debug('Initiating SSDP discovery for ' + minutes + (((minutes != '') && (seconds != '')) ? ' and ' : '') + seconds + '.');
 });
 MediaboxManager.on('SsdpDiscoveryError', function(errMsg) {
-	NeeoSdkHelper.Debug('SsdpDiscoveryError: ' +  errMsg);
+	WebunitySdkHelper.Debug('SsdpDiscoveryError: ' +  errMsg);
 });
 MediaboxManager.on('SsdpDiscoveryException', function(errMsg, rawData) {
-	NeeoSdkHelper.Debug('SsdpDiscoveryException: ' + errMsg);
-	NeeoSdkHelper.Debug('SsdpDiscoveryException: ' + rawData);
+	WebunitySdkHelper.Debug('SsdpDiscoveryException: ' + errMsg);
+	WebunitySdkHelper.Debug('SsdpDiscoveryException: ' + rawData);
 });
 MediaboxManager.on('SsdpDiscoveryFinished', function() {
-	NeeoSdkHelper.Debug('SsdpDiscoveryFinished');
+	WebunitySdkHelper.Debug('SsdpDiscoveryFinished');
 });
 MediaboxManager.LoadAndDiscoverBoxes();
+
